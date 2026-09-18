@@ -2,12 +2,14 @@ import BotaoMaior from "../Components/BotaoMaior"
 import CadastroModal from "../Components/CadastroModal"
 import Input from "../Components/Input"
 import { useState } from "react"
+import { Navigate, useNavigate } from "react-router-dom"
 
 function TelaLogin() {
 
     const [open, setOpen] = useState(false);
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
+    const navigate = useNavigate();
 
     async function Login() {
         const resposta = await fetch("http://localhost:3000/login", {
@@ -24,6 +26,20 @@ function TelaLogin() {
         })
 
         const dados = await resposta.json()
+
+        if (!resposta.ok) {
+            alert(dados.mensagem);
+            return;
+        } 
+
+        localStorage.setItem("token", dados.token)
+
+        localStorage.setItem(
+            "usuario",
+            JSON.stringify(dados.usuario)
+        )
+
+        navigate("/administrador")
     }
 
     return (
@@ -44,7 +60,7 @@ function TelaLogin() {
                 </div>
 
                 <div className="flex justify-center">
-                    < BotaoMaior text="Entrar" />
+                    < BotaoMaior onClick={Login} text="Entrar" />
                 </div>
             </div>
 

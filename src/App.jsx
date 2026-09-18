@@ -4,6 +4,7 @@ import AdicionarLivro from "./pages/AdicionarLivro"
 import Sidebar from "./Components/Sidebar"
 import Emprestimo from "./pages/Emprestimo"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
+import ProtectedRoute from "./Components/ProtectedRoute"
 
 function App() {
 
@@ -16,17 +17,29 @@ function App() {
 
           <Route
             path="/administrador"
-            element={<AdministradorTela />}
+            element={
+              < ProtectedRoute>
+                  <AdministradorTela />
+              </ ProtectedRoute >
+            }
           />
 
-          <Route
+           <Route
             path="/AdicionarLivro"
-            element={<AdicionarLivro />}
+            element={
+              < ProtectedRoute>
+                  <AdicionarLivro />
+              </ ProtectedRoute >
+            }
           />
 
-          <Route
+           <Route
             path="/emprestimo"
-            element={< Emprestimo />}
+            element={
+              < ProtectedRoute>
+                  <emprestimo />
+              </ ProtectedRoute >
+            }
           />
         </Routes>
       </BrowserRouter>
