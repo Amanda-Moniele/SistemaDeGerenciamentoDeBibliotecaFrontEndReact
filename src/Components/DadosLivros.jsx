@@ -1,6 +1,80 @@
+import { useState, useEffect } from "react"
 import Input from "./Input"
 
 function DadosLivros({ livro }) {
+
+    const [quantidade, setQuantidade] = useState(1);
+    const [localizacao, setLocalizacao] = useState("");
+    const [sinopse, setSinopse] = useState("");
+    const [salvando, setSalvando] = useState(false);
+
+    useEffect(() => {
+        setQuantidade(1);
+        setLocalizacao("");
+        setSinopse("");
+    }, [livro]);
+
+    async function handleSalvarLivro() {
+        if (!livro) {
+            alert("Selecione um livro primeiro.");
+            return;
+        }
+
+        if (!localizacao) {
+            alert("Escolha uma localização.");
+            return;
+        }
+
+        if (!Number.isInteger(Number(quantidade)) || Number(quantidade) < 1) {
+            alert("Informe uma quantidade válida.");
+            return;
+        }
+
+        setSalvando(true);
+
+        try {
+            const resposta = await fetch("http://localhost:3000/livros", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    titulo: livro.title,
+                    autor: livro.author_name?.[0] || null,
+                    editora: livro.publisher?.[0] || null,
+                    ano_publicacao: livro.first_publish_year || null,
+                    categoria: livro.subject?.[0] || null,
+                    isbn: livro.isbn?.[0] || null,
+                    capa_url: livro.cover_i
+                        ? `https://covers.openlibrary.org/b/id/${livro.cover_i}-L.jpg`
+                        : null,
+                    quantidade: Number(quantidade),
+                    localizacao,
+                    sinopse
+                })
+            });
+
+            const resultado = await resposta.json();
+
+            if (!resposta.ok) {
+                throw new Error(
+                    resultado.mensagem || "Erro ao salvar livro."
+                );
+            }
+
+            alert("Livro salvo com sucesso!");
+
+            setQuantidade(1);
+            setLocalizacao("");
+            setSinopse("");
+
+        } catch (error) {
+            alert(error.message);
+
+        } finally {
+            setSalvando(false);
+        }
+    }
 
     return (
         <div className="border border-bege w-200 rounded-lg p-5">
@@ -102,7 +176,7 @@ function DadosLivros({ livro }) {
                             Quantidade de exemplares:
                         </p>
 
-                        <input
+                        <input value={quantidade} onChange={(e) => setQuantidade(e.target.value)}
                             className="border border-marrom outline-none w-20 rounded-md"
                             type="text"
                         />
@@ -116,7 +190,7 @@ function DadosLivros({ livro }) {
 
                             Localização:
 
-                            <select className="text-white bg-marrom rounded-lg ml-2">
+                            <select value={localizacao} onChange={(e) => setLocalizacao(e.target.value)} className="text-white bg-marrom rounded-lg ml-2">
 
                                 <option value="" disabled>
                                     Escolha uma estante
@@ -147,7 +221,7 @@ function DadosLivros({ livro }) {
                             Sinopse
                         </label>
 
-                        <textarea
+                        <textarea value={sinopse} onCanPlay={(e) => setSinopse(e.target.value)}
                             className="w-full h-70 border border-bege outline-none rounded-lg text-base p-3"
                         />
 
@@ -155,6 +229,17 @@ function DadosLivros({ livro }) {
 
                 </div>
 
+            </div>
+
+
+            <div className="flex justify-end pt-5">
+                <button
+                    onClick={handleSalvarLivro}
+                    disabled={!livro || salvando}
+                    className="bg-marromEscuro text-white px-5 py-3 rounded-lg cursor-pointer disabled:opacity-50"
+                >
+                    {salvando ? "Salvando..." : "Salvar livro"}
+                </button>
             </div>
 
         </div>

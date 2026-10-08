@@ -1,14 +1,26 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({
+    somenteAdministrador = false
+}) {
 
     const token = localStorage.getItem("token");
+    const usuarioSalvo = localStorage.getItem("usuario");
 
-    if (!token) {
+    if (!token || !usuarioSalvo) {
         return <Navigate to="/" replace />;
     }
 
-    return children;
+    const usuario = JSON.parse(usuarioSalvo);
+    console.log(usuario)
+    if (
+        somenteAdministrador &&
+        usuario.tipoUsuario !== "administrador"
+    ) {
+        return <Navigate to="/" replace />;
+    }
+
+    return <Outlet />;
 }
 
 export default ProtectedRoute;

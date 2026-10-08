@@ -11,4 +11,16 @@ export async function buscarLivros(titulo, pagina) {
     const dados = await resposta.json()
 
     return dados
+
+
+}
+
+export async function listarLivrosCatalogo() {
+    const resposta = await fetch("http://localhost:3000/livros");
+
+    if (!resposta.ok) {
+        throw new Error("Erro ao buscar livros do catálogo.");
+    }
+
+    return resposta.json();
 }

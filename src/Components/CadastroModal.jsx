@@ -14,6 +14,8 @@ function CadastroModal({ setOpen }) {
 
     const [toast, setToast] = useState(null);
 
+    const [tipoUsuario, setTipoUsuario] = useState("usuario");
+
     async function cadastrarUsuario() {
 
         // Email no formato padrão
@@ -71,7 +73,8 @@ function CadastroModal({ setOpen }) {
                 body: JSON.stringify({
                     email,
                     nome,
-                    senha
+                    senha,
+                    tipoUsuario
                 })
             });
 
@@ -144,6 +147,38 @@ function CadastroModal({ setOpen }) {
                         type="password"
                         placeholder="......."
                     />
+
+                    <div className="flex gap-5 pb-3">
+
+                        <div>
+                            <input
+                                type="radio"
+                                name="tipoUsuario"
+                                value="administrador"
+                                checked={tipoUsuario === "administrador"}
+                                onChange={(e) => setTipoUsuario(e.target.value)}
+                            />
+
+                            <label className="pl-1">
+                                Administrador
+                            </label>
+                        </div>
+
+                        <div>
+                            <input
+                                type="radio"
+                                name="tipoUsuario"
+                                value="usuario"
+                                checked={tipoUsuario === "usuario"}
+                                onChange={(e) => setTipoUsuario(e.target.value)}
+                            />
+
+                            <label className="pl-1">
+                                Usuário comum
+                            </label>
+                        </div>
+
+                    </div>
 
                     <BotaoMaior
                         onClick={cadastrarUsuario}
